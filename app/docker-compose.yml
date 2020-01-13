@@ -22,7 +22,7 @@ services:
       DB_HOSTNAME: db
       DB_DATABASE: ${DB_NAME}
       DB_USERNAME: ${DB_NAME}
-      DB_PASSWORD: ieD1Woh9 
+      DB_PASSWORD: highsecuritypwd 
       DB_PORT: 3306
     networks:
       - intra      
@@ -34,8 +34,8 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_NAME}
-      MYSQL_PASSWORD: ieD1Woh9
-      MYSQL_ROOT_PASSWORD: oosh5reF
+      MYSQL_PASSWORD: highsecuritypwd
+      MYSQL_ROOT_PASSWORD: roothighsecuritypwd
     networks:
       - intra
 volumes:
