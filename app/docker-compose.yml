@@ -1,0 +1,47 @@
+version: "3.7"
+services:
+  web:
+    image: ${REGISTRY_PREFIX}${PROJECT}-web
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    volumes:
+      - wwwdata:/www
+    networks:
+      - inter-stack
+      - intra
+  php:
+    image: ${REGISTRY_PREFIX}${PROJECT}-php
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    volumes:
+      - wwwdata:/www      
+    environment:
+      PROJECT_URL: ${PROJECT_URL}
+      DB_HOSTNAME: db
+      DB_DATABASE: ${DB_NAME}
+      DB_USERNAME: ${DB_NAME}
+      DB_PASSWORD: ieD1Woh9 
+      DB_PORT: 3306
+    networks:
+      - intra      
+  db:
+    image: ${REGISTRY_PREFIX}${PROJECT}-db
+    build: ./db
+    volumes:
+      - mysqldata:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_NAME}
+      MYSQL_PASSWORD: ieD1Woh9
+      MYSQL_ROOT_PASSWORD: oosh5reF
+    networks:
+      - intra
+volumes:
+  mysqldata:
+  wwwdata:
+networks:
+  inter-stack:
+    external: true
+  intra: 

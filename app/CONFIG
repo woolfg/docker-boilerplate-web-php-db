@@ -1,0 +1,36 @@
+# this name is used for naming (containers, etc.)
+PROJECT=myproject-wordpress
+
+# name of your mysql db (used in prod)
+DB_NAME=myproject_wordpress
+
+# hostnames/domains of the project,
+# e.g. with and without www, separated with spaces
+PROJECT_HOSTNAMES="myproject.at www.myproject.at misc.myproject.at"
+
+# often used in php configs, can be accesssed vis $_ENV['PROJECT_URL'] 
+# is replaced by localhost when starting the dev environment locally
+PROJECT_URL=https://www.myproject.at
+
+## DEPLOYMENT STUFF
+
+# hostname of your prod docker swarm manager
+SWARM_MANAGER=manager.my-cloud.at
+
+# if you are using a private docker registry, otherwise just keep it empty
+# e.g. gcp container registry
+REGISTRY_PREFIX=eu.gcr.io/my-gcp-project/
+
+# dir to store src and mysql backups from dev, prod, legacy
+BACKUP_DIR=./backup
+
+## LEGACY hosts for dumping mysql and the php code
+
+# the sever has to be accessible via ssh
+# adapt your .ssh/config to be able to login
+# automatically with the correct username
+LEGACY_MYSQL_HOST=someoldhost.at
+LEGACY_DB_NAME=oldprojectname_wordpress
+
+LEGACY_SRC_HOST=someoldhost.at
+LEGACY_SRC_PATH=/home/someoldhost.at/www/

@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  web:
+    ports:
+      - 8080:80
+  php:
+    environment:
+      PROJECT_URL: http://localhost:8080
+    
+networks:
+  inter-stack:
+    internal: true      
