@@ -27,22 +27,22 @@ shell-%: ## run all needed container for dev
 dumpdb: ## dump the database from db container
 	$(DOCKER_COMPOSE_DEV) exec db /bin/sh \
 	-c 'mysqldump -uroot -p"$${MYSQL_ROOT_PASSWORD}" $(DB_NAME)' \
-	> $(BACKUP_DIR)/mysql/$(DB_NAME)_local_$(shell date -Iseconds).sql
+	> $(BACKUP_DIR)/mysql/$(DB_NAME)_local_$(shell date +%FT%T%z).sql
 
 .PHONY:dumpdb-prod 
-dumpdb-prod: ## dump the database from db container on prof
+dumpdb-prod: ## dump the database from db container on prod
 	ssh $(SWARM_MANAGER) 'sudo docker exec $$(sudo docker ps -q -f name=redtape-invoice_db) \
     /bin/bash -c "mysqldump -uroot -p\$${MYSQL_ROOT_PASSWORD} $(DB_NAME)"' \
-	> $(BACKUP_DIR)/mysql/$(DB_NAME)_prod_$(shell date -Iseconds).sql
+	> $(BACKUP_DIR)/mysql/$(DB_NAME)_prod_$(shell date +%FT%T%z).sql
 
 .PHONY:dumpdb-legacy
-dumpdb-legacy: ## dump the database from db container on prof
+dumpdb-legacy: ## dump the database from db container on prod
 	ssh $(LEGACY_MYSQL_HOST) "mysqldump -uroot -p $(LEGACY_DB_NAME)" \
-	> $(BACKUP_DIR)/mysql/$(DB_NAME)_legacy_$(shell date -Iseconds).sql
+	> $(BACKUP_DIR)/mysql/$(DB_NAME)_legacy_$(shell date +%FT%T%z).sql
 
 .PHONY:dumpcode-legacy
 dumpcode-legacy: ## dump the source code from the legacy system to ./src
-	BACKUPPATH=$(BACKUP_DIR)/src/$(shell date -Iseconds); \
+	BACKUPPATH=$(BACKUP_DIR)/src/$(shell date +%FT%T%z); \
 	mkdir -p $$BACKUPPATH ; \
 	scp -r $(LEGACY_SRC_HOST):$(LEGACY_SRC_PATH)/* $$BACKUPPATH
 
