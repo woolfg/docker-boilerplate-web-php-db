@@ -4,9 +4,9 @@ server {
     root /www;
 
     # works for most php setups, e.g. wordpress
-    if (!-e $request_filename) { 
-      rewrite ^(.+)$ /index.php?q=$1 last; 
-    } 
+    location / {
+      try_files $uri $uri/ /index.php?$args;
+    }
 
     location ~ \.php$ {
         try_files $uri =404;
