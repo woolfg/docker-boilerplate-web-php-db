@@ -6,7 +6,13 @@ services:
   php:
     environment:
       PROJECT_URL: http://localhost:8080
-    
+
+secrets:
+  db_root_password:
+    file: db/secret
+  db_password:
+    file: db/secret
+
 networks:
   inter-stack:
     internal: true      

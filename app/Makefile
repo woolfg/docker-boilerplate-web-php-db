@@ -17,7 +17,7 @@ run: ## run all needed container for dev
 
 .PHONY: run-prod 
 run-prod: ## run prod env without mounting the local code
-	docker-compose -f docker-compose.yml -f docker-compose.devprod.yml up
+	docker-compose -p $(PROJECT) -f docker-compose.yml -f docker-compose.devprod.yml up
 
 .PHONY: shell-% 
 shell-%: ## run all needed container for dev
@@ -53,9 +53,9 @@ build-images: ## build all images locally
 
 .PHONY: push-images 
 push-images: build-images ## build images and push to container registry
-	docker tag ${REGISTRY_PREFIX}${PROJECT}-php ${REGISTRY_PREFIX}${PROJECT}-php:$(VERSION_TAG)
-	docker tag ${REGISTRY_PREFIX}${PROJECT}-web ${REGISTRY_PREFIX}${PROJECT}-web:$(VERSION_TAG)
-	docker tag ${REGISTRY_PREFIX}${PROJECT}-db ${REGISTRY_PREFIX}${PROJECT}-db:$(DB_VERSION_TAG)  
+	docker tag ${REGISTRY_PREFIX}${PROJECT}-php:$(VERSION_TAG) ${REGISTRY_PREFIX}${PROJECT}-php:latest
+	docker tag ${REGISTRY_PREFIX}${PROJECT}-web:$(VERSION_TAG) ${REGISTRY_PREFIX}${PROJECT}-web:latest
+	docker tag ${REGISTRY_PREFIX}${PROJECT}-db:$(DB_VERSION_TAG) ${REGISTRY_PREFIX}${PROJECT}-db:latest
 	docker push ${REGISTRY_PREFIX}${PROJECT}-php:$(VERSION_TAG)
 	docker push ${REGISTRY_PREFIX}${PROJECT}-web:$(VERSION_TAG)
 	docker push ${REGISTRY_PREFIX}${PROJECT}-db:$(DB_VERSION_TAG)
@@ -67,12 +67,17 @@ push-images: build-images ## build images and push to container registry
 deploy-prod: push-images deploy-yml-prod initvolume-prod ## deploy docker-compose definition and pull images
 	
 .PHONY: deploy-yml-prod
-deploy-yml-prod: ## deploy docker-compose definition
-	envsubst '$${PROJECT_HOSTNAMES},$${REGISTRY_PREFIX},$${PROJECT},$${DB_NAME},$${PROJECT_URL}' < docker-compose.yml > docker-compose.yml.env
+deploy-yml-prod: generate-prod-db-pwds ## deploy docker-compose definition
+	envsubst '$${PROJECT_HOSTNAMES},$${REGISTRY_PREFIX},$${PROJECT},$${DB_NAME},$${PROJECT_URL},$${VERSION_TAG},$${DB_VERSION_TAG}' < docker-compose.yml > docker-compose.yml.env
 	scp docker-compose.yml.env $(SWARM_MANAGER):/tmp/${PROJECT}.yml
 	rm docker-compose.yml.env
 	ssh $(SWARM_MANAGER) "sudo mv /tmp/${PROJECT}.yml /opt/stacks"
 	ssh $(SWARM_MANAGER) "sudo docker stack deploy --with-registry-auth --compose-file /opt/stacks/${PROJECT}.yml ${PROJECT}"
+
+.PHONY: generate-prod-db-pwds
+generate-prod-db-pwds: # generate random passwords for db on prod
+	ssh $(SWARM_MANAGER) "openssl rand -base64 32 | sudo docker secret create ${PROJECT}_db_password - || pwd already there"
+	ssh $(SWARM_MANAGER) "openssl rand -base64 32 | sudo docker secret create ${PROJECT}_db_root_password -|| pwd already there"
 
 .PHONY: initvolume-prod
 initvolume-prod: ## call volume init script in web container on prod when read

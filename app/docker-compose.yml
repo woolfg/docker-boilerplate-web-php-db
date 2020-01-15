@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   web:
-    image: ${REGISTRY_PREFIX}${PROJECT}-web
+    image: ${REGISTRY_PREFIX}${PROJECT}-web:${VERSION_TAG}
     build:
       context: .
       dockerfile: web/Dockerfile
@@ -11,7 +11,7 @@ services:
       - inter-stack
       - intra
   php:
-    image: ${REGISTRY_PREFIX}${PROJECT}-php
+    image: ${REGISTRY_PREFIX}${PROJECT}-php:${VERSION_TAG}
     build:
       context: .
       dockerfile: php/Dockerfile
@@ -22,25 +22,45 @@ services:
       DB_HOSTNAME: db
       DB_DATABASE: ${DB_NAME}
       DB_USERNAME: ${DB_NAME}
-      DB_PASSWORD: highsecuritypwd 
+      DB_PASSWORD_FILE: /run/secrets/db_password
       DB_PORT: 3306
+    secrets:
+      - db_password       
     networks:
       - intra      
   db:
-    image: ${REGISTRY_PREFIX}${PROJECT}-db
+    image: ${REGISTRY_PREFIX}${PROJECT}-db:${DB_VERSION_TAG}
     build: ./db
     volumes:
       - mysqldata:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_NAME}
-      MYSQL_PASSWORD: highsecuritypwd
-      MYSQL_ROOT_PASSWORD: roothighsecuritypwd
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
     networks:
       - intra
+    secrets:
+      - db_root_password
+      - db_password
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.persistent == extvol1
+
+secrets:
+  db_root_password:
+    name: ${PROJECT}_db_root_password
+    external: true
+  db_password:
+    name: ${PROJECT}_db_password
+    external: true
+
 volumes:
   mysqldata:
   wwwdata:
+    
 networks:
   inter-stack:
     external: true
