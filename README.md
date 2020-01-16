@@ -13,3 +13,19 @@ This boilerplate project can be used for running legacy php projects with Mysql 
 - `make run` starts a local stack which should already work everything, you can access the project at `localhost` in your browser
 - if there are any problems, try to fix them until everything works fine or perform updates when needed
 - if everything works fine you can dump the local db again to be up to date for the prod version (use `make dumpdb` and copy file to init_import.sql)
+
+## PHP Code Adaption
+
+```
+if (!empty($_ENV['DB_PASSWORD_FILE'])) {
+  $db_password = @file_get_contents($_ENV['DB_PASSWORD_FILE']);
+} elseif (!empty($_ENV['DB_PASSWORD'])) {
+  $db_password = $_ENV['DB_PASSWORD'];
+}
+$db_password = trim($db_password);
+if (empty($db_password)) {
+  die('Password for DB not specified.');
+}
+// e.g. to set the DB password in Wordpress
+define('DB_PASSWORD', $db_password);
+```
