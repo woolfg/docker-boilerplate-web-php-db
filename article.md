@@ -8,3 +8,4 @@ keywords:
 - makefile are good
 - process of migration
 - php adaption
+- naming of containers, dns lookup prob e.g. php
