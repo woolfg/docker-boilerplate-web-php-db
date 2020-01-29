@@ -56,7 +56,7 @@ dumpcode-legacy: ## dump the source code from the legacy system to ./backup/src
 
 .PHONY: build-images 
 build-images: ## build all images locally
-	envsubst '$${PROJECT_HOSTNAMES}' < web/nginx.conf.tpl > web/nginx.conf
+	envsubst '$${PROJECT_HOSTNAMES},$${PROJECT}' < web/nginx.conf.tpl > web/nginx.conf
 	$(DOCKER_COMPOSE_DEV) build
 
 .PHONY: push-images 

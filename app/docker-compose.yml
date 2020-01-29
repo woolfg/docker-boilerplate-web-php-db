@@ -19,7 +19,7 @@ services:
       - wwwdata:/www      
     environment:
       PROJECT_URL: ${PROJECT_URL}
-      DB_HOSTNAME: db
+      DB_HOSTNAME: ${PROJECT}_db
       DB_DATABASE: ${DB_NAME}
       DB_USERNAME: ${DB_NAME}
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -29,6 +29,7 @@ services:
     networks:
       - intra      
   db:
+    container_name: ${PROJECT}_db
     image: ${REGISTRY_PREFIX}${PROJECT}-db:10${DB_VERSION_TAG}
     build: ./db
     volumes:
