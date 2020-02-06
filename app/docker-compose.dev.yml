@@ -7,10 +7,15 @@ services:
     ports:
       - 8080:80
   php:
+    container_name: ${PROJECT}_php
     volumes:
       - ./src:/www
     environment:
       PROJECT_URL: http://localhost:8080
+  db:
+    container_name: ${PROJECT}_db
+    volumes:
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
 
 secrets:
   db_root_password:

@@ -29,7 +29,6 @@ services:
     networks:
       - intra      
   db:
-    container_name: ${PROJECT}_db
     image: ${REGISTRY_PREFIX}${PROJECT}-db:10${DB_VERSION_TAG}
     build: ./db
     volumes:
