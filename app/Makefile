@@ -31,16 +31,16 @@ run-prod: ## run prod env without mounting the local code
 shell-%: ## run shell for given container e.g. shell-php
 	$(DOCKER_COMPOSE_DEV) exec $* /bin/sh
 
-.PHONY:dumpdb 
+.PHONY:dumpdb
 dumpdb: ## dump the database from db container
 	$(DOCKER_COMPOSE_DEV) exec db /bin/sh \
-	-c 'mysqldump -uroot -p"$${MYSQL_ROOT_PASSWORD}" $(DB_NAME)' \
+	-c 'mysqldump -uroot -p"$$(cat /run/secrets/db_root_password)" $(DB_NAME)' \
 	> $(BACKUP_DIR)/mysql/$(DB_NAME)_local_$(shell date +%FT%T%z).sql
 
-.PHONY:dumpdb-prod 
+.PHONY:dumpdb-prod
 dumpdb-prod: ## dump the database from db container on prod
-	ssh $(SWARM_MANAGER) 'sudo docker exec $$(sudo docker ps -q -f name=redtape-invoice_db) \
-    /bin/bash -c "mysqldump -uroot -p\$${MYSQL_ROOT_PASSWORD} $(DB_NAME)"' \
+	ssh $(SWARM_MANAGER) 'sudo docker exec $$(sudo docker ps -q -f name=$(PROJECT)_db.1) \
+    /bin/bash -c "mysqldump -uroot -p\$$(cat /run/secrets/db_root_password) $(DB_NAME)"' \
 	> $(BACKUP_DIR)/mysql/$(DB_NAME)_prod_$(shell date +%FT%T%z).sql
 
 .PHONY:dumpdb-legacy
