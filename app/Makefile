@@ -75,14 +75,9 @@ push-images: build-images ## build images and push to container registry
 deploy-prod: push-images deploy-yml-prod ## deploy docker-compose definition and pull images
 	
 .PHONY: deploy-yml-prod
-deploy-yml-prod: generate-prod-db-pwds ## deploy docker-compose definition
+deploy-yml-prod: ## deploy docker-compose definition
 	envsubst '$${PROJECT_HOSTNAMES},$${REGISTRY_PREFIX},$${PROJECT},$${DB_NAME},$${PROJECT_URL},$${VERSION_TAG},$${DB_VERSION_TAG}' < docker-compose.yml > docker-compose.yml.env
 	scp docker-compose.yml.env $(SWARM_MANAGER):/tmp/${PROJECT}.yml
 	rm docker-compose.yml.env
 	ssh $(SWARM_MANAGER) "sudo mv /tmp/${PROJECT}.yml /opt/stacks"
 	ssh $(SWARM_MANAGER) "sudo docker stack deploy --with-registry-auth --compose-file /opt/stacks/${PROJECT}.yml ${PROJECT}"
-
-.PHONY: generate-prod-db-pwds
-generate-prod-db-pwds: # generate random passwords for db on prod
-	ssh $(SWARM_MANAGER) "openssl rand -base64 32 | sudo docker secret create ${PROJECT}_db_password - || pwd already there"
-	ssh $(SWARM_MANAGER) "openssl rand -base64 32 | sudo docker secret create ${PROJECT}_db_root_password -|| pwd already there"
