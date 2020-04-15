@@ -48,6 +48,11 @@ services:
       placement:
         constraints:
           - node.labels.persistent == extvol1
+      resources:
+        limits:
+          memory: 200M
+        reservations:
+          memory: 50M
 
 secrets:
   db_root_password:
