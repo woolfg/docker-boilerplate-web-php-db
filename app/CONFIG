@@ -26,7 +26,7 @@ BACKUP_DIR=./backup
 
 ## LEGACY hosts for dumping mysql and the php code
 
-# the sever has to be accessible via ssh
+# the server has to be accessible via ssh
 # adapt your .ssh/config to be able to login
 # automatically with the correct username
 LEGACY_MYSQL_HOST=someoldhost.at

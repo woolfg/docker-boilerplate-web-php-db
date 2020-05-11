@@ -8,11 +8,11 @@ export
 DOCKER_COMPOSE_DEV := docker-compose -p $(PROJECT) -f docker-compose.yml -f docker-compose.dev.yml
 
 ifeq ($(VERSION_TAG),)
-$(error git describe empty, maybe no tags present? do also push them!)
+$(error git describe empty! Please, create a tag first by e.g. git tag -a firstversion)
 endif
 
 ifeq ($(DB_VERSION_TAG),)
-$(error db version checksum is empty, init file defined?)
+$(error db version checksum is empty! Did you already create the file db/init_import.sql.gz by e.g. dumping the legacy db?)
 endif
 
 .PHONY: help
