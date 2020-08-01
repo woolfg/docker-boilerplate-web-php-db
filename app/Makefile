@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-VERSION_TAG := $(shell git describe HEAD)
+VERSION_TAG := $(shell git describe --always --dirty --tags)
 DB_VERSION_TAG := $(shell echo "$(sha1sum db/init_import.sql.gz) $(sha1sum db/Dockerfile)" | sha1sum | cut -d ' ' -f 1 | cut -c1-8)
 
 include CONFIG
