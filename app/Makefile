@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 VERSION_TAG := $(shell git describe --always --dirty --tags)
-DB_VERSION_TAG := $(shell echo "$(sha1sum db/init_import.sql.gz) $(sha1sum db/Dockerfile)" | sha1sum | cut -d ' ' -f 1 | cut -c1-8)
+MARIADB_VERSION := $(shell cat db/Dockerfile | grep FROM | sed 's/FROM mariadb://')
+DB_VERSION_TAG := $(MARIADB_VERSION)-$(shell echo "$(sha1sum db/init_import.sql.gz) $(sha1sum db/Dockerfile)" | sha1sum | cut -d ' ' -f 1 | cut -c1-8)
 
 include CONFIG
 export
@@ -8,7 +9,7 @@ export
 DOCKER_COMPOSE_DEV := docker-compose -p $(PROJECT) -f docker-compose.yml -f docker-compose.dev.yml
 
 ifeq ($(VERSION_TAG),)
-$(error git describe empty! Please, create a tag first by e.g. git tag -a firstversion)
+$(error git describe empty! Check the git status)
 endif
 
 ifeq ($(DB_VERSION_TAG),)

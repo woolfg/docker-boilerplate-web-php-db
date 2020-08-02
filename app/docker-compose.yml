@@ -29,7 +29,7 @@ services:
     networks:
       - intra      
   db:
-    image: ${REGISTRY_PREFIX}${PROJECT}-db:10${DB_VERSION_TAG}
+    image: ${REGISTRY_PREFIX}${PROJECT}-db:${DB_VERSION_TAG}
     build: ./db
     volumes:
       - mysqldata:/var/lib/mysql
